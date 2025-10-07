@@ -14,7 +14,8 @@
 
   header {
     text-align: center;
-    padding: 70px 20px 40px;
+    /* tightened padding to reduce vertical gap */
+    padding: 40px 20px 18px;
     background: linear-gradient(180deg, #001f1f, #0b0b0b);
   }
 
@@ -24,11 +25,42 @@
     margin: 0 auto;
     border-radius: 50%;
     border: 4px solid cyan;
-    background-image: url('logo.png'); /logo.png/
+    background-image: url('logo.png'); /* logo.png */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     animation: neonLight 2s infinite alternate;
+  }
+
+  /* skip link (visible on keyboard focus) */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .skip-link:focus {
+    left: 10px;
+    top: 10px;
+    width: auto;
+    height: auto;
+    padding: 8px 12px;
+    background: #001f1f;
+    color: #00ffff;
+    border-radius: 6px;
+    z-index: 9999;
+    text-decoration: none;
+  }
+
+  /* utility: visually hide but keep accessible to screen readers */
+  .sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
   }
 
   @keyframes neonLight {
@@ -36,8 +68,8 @@
     to { box-shadow: 0 0 35px #00ffff, 0 0 60px #00ffff; }
   }
 
-  h1 { color: #01ffff; margin-top: 25px; font-size: 2.3em; }
-  p.subtitle { font-size: 1.1em; color: #ccc; }
+  h1 { color: #01ffff; margin-top: 8px; font-size: 2.4em; }
+  p.subtitle { font-size: 1.0em; color: #ccc; margin: 4px 0; line-height: 1.2; }
 
   .login-section {
     width: 90%;
@@ -46,7 +78,9 @@
     padding: 30px;
     border-radius: 10px;
     background: #111;
-    box-shadow: 0 0 15px cyan;
+  border: none;
+  box-shadow: 0 0 10px cyan;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
     text-align: center;
   }
 
@@ -72,11 +106,23 @@
 
   .login-section button:hover { background: #00cccc; }
 
+  .login-section:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00ffff;
+  }
+
   .founders {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding: 40px 10px;
+  }
+
+  /* modifier to reduce vertical gap between stacked .founders sections */
+  .founders--tight {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: -20px; /* pull sections closer together */
   }
 
   .founder {
@@ -88,6 +134,19 @@
     text-align: center;
     box-shadow: 0 0 10px cyan;
     transition: 0.3s;
+  }
+
+  /* glowing box style for section headings (like the logo neon) */
+  .section-box {
+    width: auto;
+    display: inline-block;
+    padding: 14px 22px;
+    margin: 10px auto;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(0,255,255,0.06);
+    box-shadow: 0 0 18px rgba(0,255,255,0.12), 0 0 40px rgba(0,255,255,0.08);
+    animation: neonLight 2.5s infinite alternate;
   }
 
   .founder:hover {
@@ -106,6 +165,56 @@
   .founder h3 { color: #00ffff; margin-bottom: 5px; }
   .founder p { color: #ccc; font-size: 0.9em; margin: 4px 0; }
 
+    /* Responsive tweaks for small screens */
+    @media (max-width: 600px) {
+      header {
+        padding: 18px 14px 12px;
+      }
+
+      .logo {
+        width: 56px;
+        height: 56px;
+        background-size: contain;
+        margin-right: 10px;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        margin-top: 4px;
+      }
+
+      p.subtitle {
+        font-size: 0.95rem;
+        margin: 2px 0 6px;
+        line-height: 1.15;
+      }
+
+      .founders {
+        gap: 12px;
+        padding: 10px 14px;
+      }
+
+      .founder-cards {
+        gap: 10px;
+      }
+
+      .section-box {
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+      }
+
+      .founders .founder {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .founders .founder img {
+        width: 100%;
+        height: auto;
+        max-width: 140px;
+      }
+    }
   footer {
     background: #050505;
     text-align: center;
@@ -113,26 +222,103 @@
     color: #888;
     font-size: 0.9em;
   }
+
+  /* social icons in footer */
+  .social-links {
+    display: inline-flex;
+    gap: 12px;
+    margin-top: 10px;
+    align-items: center;
+  }
+
+  .social-links a {
+    display: inline-flex;
+    width: 64px;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: transparent;
+  /* no border per request; keep a subtle glow */
+  border: none;
+  box-shadow: 0 0 8px rgba(0,255,255,0.06);
+    color: #bfffe8;
+    text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+
+  .social-links a:hover, .social-links a:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px #00ffff;
+    outline: none;
+  }
+
+  .social-links svg { width: 20px; height: 20px; fill: currentColor; }
+
+  @media (max-width:600px) {
+    .social-links a { width: 48px; height: 48px; box-shadow: 0 0 6px rgba(0,255,255,0.05); }
+    .social-links svg { width: 16px; height: 16px; }
+  }
+
+  /* contact form styling */
+  .contact-section {
+    width: 90%;
+    max-width: 720px;
+    margin: 14px auto 22px;
+    background: #0f1112;
+    padding: 18px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 0 10px cyan;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    color: #e6fff8;
+  }
+
+  .contact-section:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px #00ffff;
+  }
+
+  .contact-section h2 { color: #00f5e0; margin: 0 0 8px; }
+  .contact-section p { margin: 0 0 10px; color: #bfeee0; }
+
+  .contact-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .contact-row .field { flex: 1 1 220px; }
+
+  .contact-section input,
+  .contact-section textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03); background: #111315; color: #fff; }
+  .contact-section textarea { min-height: 110px; resize: vertical; }
+
+  .contact-actions { text-align: right; margin-top: 10px; }
+  .contact-section button { background: #00ffff; color: #000; padding: 10px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: 700; }
+  .contact-section button:hover { background: #00e6d6; }
+
+  .contact-status { margin-top: 8px; color: #bfffe8; }
 </style>
 </head>
 <body>
 
-<header>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <header>
   <div class="logo"></div>
   <h1>FutureByte SolutionBD</h1>
   <p class="subtitle">Innovating IT Solutions for a Smarter Tomorrow</p>
 <p class="subtitle">🏢ECBChattar, Dhaka Cantt.✉️futurebytesolbd@gmail.com</p>
 </header>
 
+<main id="main-content" role="main">
+
 <section class="founders">
-  <div class="founder">
-    <h1>“Our Team”</h1>
+  <div class="founder section-box">
+    <h2 class="section-title">“Our Team”</h2>
+  </div>
 </section>
 
-<section class="founders">
+<section class="founders founders--tight">
   <div class="founder">
 
-    <img src="founder1.jpg" alt="Khalilur Rahman">
+    <img src="founder1.jpg" alt="Khalilur Rahman - Co-Founder & IT Specialist" loading="lazy" width="100" height="100">
     <h3>Khalilur Rahman</h3>
     <p>Co-Founder & IT Specialist</p>
     <p>📞 +8801739914929</p>
@@ -140,8 +326,8 @@
   </div>
 
   <div class="founder">
-    <img src="founder2.jpg" alt="Eng CM Mehedi Hasan">
-    <h3>CM Mehedi Hasan</h3>
+    <img src="founder2.jpg" alt="CM Mehedi Hasan - Co-Founder & Web Development" loading="lazy" width="100" height="100">
+    <h3>Eng CM Mehedi Hasan</h3>
     <p>Co-Founder & Web Development</p>
     <p>📞 +8801711972985</p>
     <p>✉️ cmmehedi@gmail.com</p>
@@ -149,48 +335,115 @@
 </section>
 
 <section class="founders">
-  <div class="founder">
-    <h1>“Our clients”</h1>
+  <div class="founder section-box">
+    <h2 class="section-title">“Our clients”</h2>
+  </div>
 </section>
 
-<section class="founders">
- <div class="founder">
-    <img src="founder5.png" alt="Eng CM Mehedi Hasan">
+<section class="founders founders--tight">
+  <div class="founder">
+    <img src="founder5.png" alt="AHQ - Bangladesh Army" loading="lazy" width="100" height="100">
     <h3>AHQ</h3>
     <p>Bangladesh Army</p>
      </div>
 
  <div class="founder">
-    <img src="founder6.png" alt="Khalilur Rahman">
+   <img src="founder6.png" alt="AITSO - Bangladesh Army" loading="lazy" width="100" height="100">
     <h3>AITSO</h3>
     <p>Bangladesh Army</p>
       </div>
 
   <div class="founder">
-    <img src="founder7.png" alt="Eng CM Mehedi Hasan">
+    <img src="founder7.png" alt="ARTDOC - Bangladesh Army" loading="lazy" width="100" height="100">
     <h3>ARTDOC</h3>
     <p>Bangladesh Army</p>
      </div>
 
 <div class="founder">
-    <img src="founder8.png" alt="Monohurdi Upozila">
+  <img src="founder8.png" alt="Monohurdi Upozila - Social Content Organization" loading="lazy" width="100" height="100">
     <h3>Monohurdi Upozila</h3>
     <p>Social Content Organization</p>
      </div>
 
 
 </section>
-<section class="login-section">
+
+<section class="login-section" role="form" aria-label="Admin login form">
   <h2>Admin Login</h2>
-  <input type="text" id="username" placeholder="Enter Username">
-  <input type="password" id="password" placeholder="Enter Password">
+  <label for="username" class="sr-only">Username</label>
+  <input type="text" id="username" placeholder="Enter Username" aria-label="Username">
+  <label for="password" class="sr-only">Password</label>
+  <input type="password" id="password" placeholder="Enter Password" aria-label="Password" minlength="6">
   <button onclick="login()">Login</button>
-  <p id="msg"></p>
+  <p id="msg" role="status" aria-live="polite"></p>
 </section>
 
-<footer>
-  © 2025 FutureByte SolutionBD | All Rights Reserved
-</footer>
+</main>
+
+  <!-- moved social-links here so they appear under the login box -->
+  <!-- contact form - allows users to reach out -->
+  <section class="contact-section" aria-labelledby="contactHeading">
+    <h2 id="contactHeading">Contact Form</h2>
+    <p>Please enter your name, email and message. We'll get back to you shortly.</p>
+    <!-- To enable server-side email delivery: register at Formspree and replace YOUR_FORM_ID below -->
+    <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <input type="hidden" name="_subject" value="New contact from website">
+      <div class="contact-row">
+        <div class="field">
+          <label for="cf-name" class="sr-only">Name</label>
+          <input type="text" id="cf-name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="field">
+          <label for="cf-email" class="sr-only">Email</label>
+          <input type="email" id="cf-email" name="email" placeholder="Email (example@mail.com)" required>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <label for="cf-message" class="sr-only">Message</label>
+        <textarea id="cf-message" name="message" placeholder="Write your message..." required></textarea>
+      </div>
+      <div class="contact-actions">
+        <button type="submit">Send Message</button>
+      </div>
+      <div id="contactStatus" class="contact-status" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+  <div style="text-align:center; margin: 10px 0 24px;">
+    <div class="social-links" aria-label="Social links">
+  <a class="social-whatsapp" href="https://wa.me/8801712345678" aria-label="WhatsApp">
+        <!-- WhatsApp -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0 0 12 0C5.37 0 .01 5.37.01 12c0 2.12.56 4.17 1.62 5.98L0 24l6.31-1.66A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.48-8.52zM12 21.5c-1.33 0-2.63-.34-3.77-.98l-.27-.16-3.75.99.99-3.66-.17-.3A9.5 9.5 0 0 1 2.5 12 9.5 9.5 0 0 1 12 2.5c5.24 0 9.5 4.26 9.5 9.5S17.24 21.5 12 21.5zM17.1 14.2c-.3-.15-1.78-.87-2.06-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.36.22-.66.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.79-1.67-2.09-.17-.3-.02-.46.13-.6.13-.13.3-.34.45-.51.15-.17.2-.28.3-.47.1-.18.05-.33-.03-.48-.08-.15-.68-1.64-.93-2.25-.24-.58-.48-.5-.66-.51l-.56-.01c-.18 0-.47.07-.72.34-.25.27-.97.95-.97 2.31 0 1.36.99 2.68 1.13 2.87.14.19 1.95 3 4.72 4.16 1.32.57 2.35.91 3.16 1.16.54.17 1.03.15 1.42.09.43-.07 1.36-.56 1.55-1.1.2-.55.2-1.02.14-1.12-.06-.1-.23-.16-.53-.31z"/></svg>
+      </a>
+  <a class="social-whatsapp" href="https://wa.me/8801739914929" aria-label="WhatsApp +8801739914929">
+        <!-- WhatsApp (alternate) -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0 0 12 0C5.37 0 .01 5.37.01 12c0 2.12.56 4.17 1.62 5.98L0 24l6.31-1.66A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.48-8.52zM12 21.5c-1.33 0-2.63-.34-3.77-.98l-.27-.16-3.75.99.99-3.66-.17-.3A9.5 9.5 0 0 1 2.5 12 9.5 9.5 0 0 1 12 2.5c5.24 0 9.5 4.26 9.5 9.5S17.24 21.5 12 21.5zM17.1 14.2c-.3-.15-1.78-.87-2.06-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.36.22-.66.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.79-1.67-2.09-.17-.3-.02-.46.13-.6.13-.13.3-.34.45-.51.15-.17.2-.28.3-.47.1-.18.05-.33-.03-.48-.08-.15-.68-1.64-.93-2.25-.24-.58-.48-.5-.66-.51l-.56-.01c-.18 0-.47.07-.72.34-.25.27-.97.95-.97 2.31 0 1.36.99 2.68 1.13 2.87.14.19 1.95 3 4.72 4.16 1.32.57 2.35.91 3.16 1.16.54.17 1.03.15 1.42.09.43-.07 1.36-.56 1.55-1.1.2-.55.2-1.02.14-1.12-.06-.1-.23-.16-.53-.31z"/></svg>
+      </a>
+      <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+        <!-- YouTube -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2s-.2-1.7-.8-2.4c-.8-.9-1.7-.9-2.2-1-3-.2-7.5-.2-7.5-.2h-.1s-4.5 0-7.5.2c-.5.1-1.4.1-2.2 1-.6.7-.8 2.4-.8 2.4S2 8 2 9.7v2.6C2 14 2.1 15.6 2.1 15.6s.2 1.7.8 2.4c.8.9 1.8.9 2.3 1 1.7.1 7.4.2 7.4.2s4.5 0 7.5-.2c.5-.1 1.4-.1 2.2-1 .6-.7.8-2.4.8-2.4s.1-1.6.1-3.3v-2.6c0-1.7-.1-3.5-.1-3.5zM9.8 15.1V8.9l6.2 3.1-6.2 3.1z"/></svg>
+      </a>
+      <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <!-- GitHub -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.38 7.86 10.9.57.1.78-.25.78-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.54-3.88-1.54-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.69.08-.69 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.96.1-.75.4-1.25.72-1.54-2.56-.29-5.26-1.28-5.26-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.47.11-3.06 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 2.87-.39c.97 0 1.95.13 2.87.39 2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.77.11 3.06.74.81 1.18 1.84 1.18 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.77 1.07.77 2.16 0 1.56-.01 2.82-.01 3.2 0 .3.2.66.79.55C20.71 21.38 24 17.08 24 12 24 5.73 18.27.5 12 .5z"/></svg>
+      </a>
+      <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+        <!-- Facebook -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2.4V12h2.4V9.8c0-2.4 1.4-3.7 3.5-3.7 1 0 2 .07 2 .07v2.2h-1.1c-1.1 0-1.4.66-1.4 1.3V12h2.4l-.4 2.9h-2v7A10 10 0 0 0 22 12z"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <!-- LinkedIn -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.88 2.88 0 1 0 0 5.76 2.88 2.88 0 0 0 0-5.76zM3 9h4v12H3zM9 9h3.7v1.7h.05c.51-.96 1.76-1.98 3.62-1.98C20.3 8.72 22 10.9 22 14.6V21H18v-6.3c0-1.5-.03-3.44-2.1-3.44-2.1 0-2.42 1.64-2.42 3.34V21H9z"/></svg>
+      </a>
+      <a href="mailto:futurebytesolbd@gmail.com" aria-label="Email">
+        <!-- Email -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13.5L2 6.75V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6.75L12 13.5zM12 11L22 4H2z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 FutureByte SolutionBD | All Rights Reserved
+  </footer>
 
 <script>
   const users = {
@@ -205,15 +458,80 @@
 
     if (users[username] && users[username] === password) {
       msg.style.color = "lime";
-      msg.textContent = "✅ Login Successful!";
+      msg.textContent = "✅আপনাকে ধন্যবাদ !";
       setTimeout(() => alert("Welcome " + username.toUpperCase() + "!"), 500);
     } else {
       msg.style.color = "red";
       msg.textContent = "❌ দয়াকরে সঠিক পাসওয়ার্ড দিন!";
     }
   }
+
+  // Contact form handler: validates and opens mail client (mailto) as a simple fallback
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('contactStatus');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('cf-name').value.trim();
+      const email = document.getElementById('cf-email').value.trim();
+      const message = document.getElementById('cf-message').value.trim();
+
+      if (!name || !email || !message) {
+        status.style.color = '#ff6b6b';
+        status.textContent = 'Please fill in all fields.';
+        return;
+      }
+
+      // If the form has been wired to Formspree (or similar) by setting the form.action,
+      // send the data with fetch and show a friendly status. Otherwise fall back to WhatsApp.
+      const action = (form.getAttribute('action') || '').trim();
+      // avoid posting to the placeholder formspree action which contains YOUR_FORM_ID
+      const isFormspree = action && action.includes('formspree.io') && !action.includes('YOUR_FORM_ID');
+  // If action explicitly points to a real Formspree URL, prefer server POST; otherwise open WhatsApp
+  if (isFormspree) {
+        status.style.color = '#bfffe8';
+        status.textContent = 'Sending...';
+        fetch(action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        }).then(resp => {
+          if (resp.ok) {
+            status.style.color = '#bfffe8';
+            status.textContent = 'Thank you! Your message has been sent.';
+            form.reset();
+          } else {
+            return resp.json().then(data => { throw data; });
+          }
+        }).catch(err => {
+          status.style.color = '#ff6b6b';
+          status.textContent = 'Submission failed — please try again or email futurebytesolbd@gmail.com';
+          console.error('Form submission error:', err);
+        });
+        return;
+      }
+
+      // If the action is the placeholder, inform the user that Formspree isn't configured
+      if (action && action.includes('YOUR_FORM_ID')) {
+        status.style.color = '#ffb86b';
+        status.textContent = 'Form is not configured. It will open WhatsApp instead; to enable email delivery, replace the form action with your Formspree ID.';
+      }
+
+      // Otherwise open WhatsApp chat with prefilled message to the configured number
+      const waNumber = '8801712345678'; // sanitized Bangladesh number (no +)
+      const pre = `Hi, my name is ${name}. My email is ${email}. Message: ${message}`;
+      const waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(pre);
+      window.open(waUrl, '_blank');
+      status.style.color = '#bfffe8';
+      status.textContent = 'Opening WhatsApp...';
+      form.reset();
+    });
+  });
 </script>
 
 </body>
 </html>
+
 
