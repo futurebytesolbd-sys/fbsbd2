@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FutureByte SolutionBD - Profile</title>
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0b0b0b;
+    color: white;
+  }
+  header {
+    text-align: center;
+    padding: 60px 20px 30px;
+    background: linear-gradient(180deg, #001f1f, #0b0b0b);
+  }
+  .logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    border: 3px solid cyan;
+    background-image: url('logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: neonLight 2s infinite alternate;
+  }
+  @keyframes neonLight {
+    from { box-shadow: 0 0 10px cyan, 0 0 20px cyan; }
+    to { box-shadow: 0 0 25px #00ffff, 0 0 40px #00ffff; }
+  }
+  .profile-container {
+    max-width: 420px;
+    margin: 30px auto;
+    background: #111;
+    border-radius: 12px;
+    box-shadow: 0 0 18px cyan;
+    padding: 30px 24px 24px;
+  }
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #081818;
+    border: 4px solid cyan;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #01ffff;
+    font-size: 32px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto 18px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+  }
+  .avatar:hover {
+    box-shadow: 0 0 30px #00ffff;
+  }
+  .profile-info {
+    text-align: left;
+    margin-bottom: 18px;
+  }
+  .profile-info h2 {
+    color: #01ffff;
+    margin-bottom: 8px;
+    font-size: 1.5em;
+  }
+  .profile-info p {
+    margin: 7px 0;
+    color: #ccc;
+    font-size: 1.08em;
+  }
+  .profile-info strong {
+    color: #01ffff;
+    font-weight: 600;
+  }
+  .edit-btn {
+    background: #01ffff;
+    color: #111;
+    border: none;
+    border-radius: 5px;
+    padding: 7px 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 8px;
+    margin-right: 8px;
+    transition: background 0.2s;
+  }
+  .edit-btn:hover {
+    background: #00cccc;
+  }
+  .logout-btn {
+    background: #ff3c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 7px 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .logout-btn:hover {
+    background: #d90000;
+  }
+  .contact-info {
+    margin-top: 18px;
+    background: #181818;
+    border-radius: 8px;
+    padding: 14px 12px;
+    color: #bff;
+    font-size: 1em;
+  }
+  @media (max-width: 600px) {
+    .profile-container {
+      padding: 16px 6px;
+    }
+    .avatar {
+      width: 80px;
+      height: 80px;
+      font-size: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"></div>
+  <h1>FutureByte SolutionBD</h1>
+  <p class="subtitle">User Profile</p>
+  <div style="text-align:center;margin-top:10px;">
+    <a href="accounts.html" style="display:inline-block;background:#01ffff;color:#001;padding:8px 14px;border-radius:8px;font-weight:700;text-decoration:none">Open Accounts Ledger</a>
+  </div>
+</header>
+<div class="profile-container">
+  <div class="avatar" id="avatar" title="Click to change photo">
+    <img id="avatarImg" src="" alt="Profile photo" />
+    <input id="avatarFile" type="file" accept="image/*" style="display:none" />
+  </div>
+  <div class="profile-info">
+    <h2 id="userNameDisplay">Mehedi Hasan</h2>
+    <p><strong>Designation:</strong> <span id="userDesignation">Co-Founder</span></p>
+    <p><strong>Email:</strong> <span id="userEmailDisplay">futurebytesolbd@gmail.com</span></p>
+    <p><strong>Address:</strong> <span id="userAddress">Dhaka, Bangladesh</span></p>
+    <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+  <div class="contact-info">
+    <strong>Contact:</strong> futurebytesolbd@gmail.com📞 +8801711972985  </div>
+</div>
+<script>
+// Profile page script: load/save full profile to sessionStorage
+(function(){
+  // Try to load a saved profile object
+  const raw = sessionStorage.getItem('fbs_user_profile');
+  const sessionName = sessionStorage.getItem('fbs_user');
+  let user = raw ? JSON.parse(raw) : null;
+  if (!user) {
+    user = {
+      name: sessionName || 'User',
+      designation: 'Co-Founder',
+      email: 'futurebytesolbd@gmail.com',
+      address: 'Dhaka, Bangladesh',
+      avatar: sessionStorage.getItem('fbs_avatar') || ''
+    };
+  } else {
+    // ensure avatar is present (in case profile was saved without avatar)
+    user.avatar = user.avatar || sessionStorage.getItem('fbs_avatar') || '';
+  }
+
+  // If there's a logged-in username and profile name is generic, prefer the logged-in name
+  if (sessionName && (!user.name || user.name === 'User')) {
+    user.name = sessionName;
+  }
+
+  const avatarImg = document.getElementById('avatarImg');
+
+  function renderProfile() {
+    document.getElementById('userNameDisplay').textContent = user.name || 'User';
+    document.getElementById('userDesignation').textContent = user.designation || '';
+  document.getElementById('userEmailDisplay').textContent = user.email || '';
+  document.getElementById('userAddress').textContent = user.address || '';
+
+    // render avatar or initials
+    const existingInitials = document.getElementById('avatarInitials');
+    if (existingInitials) existingInitials.remove();
+
+    if (user.avatar) {
+      avatarImg.src = user.avatar;
+      avatarImg.style.display = 'block';
+    } else {
+      avatarImg.style.display = 'none';
+      const initials = (user.name || 'U').split(' ')[0].slice(0,2).toUpperCase();
+      const placeholder = document.createElement('div');
+      placeholder.id = 'avatarInitials';
+      placeholder.style.color = '#01ffff';
+      placeholder.style.fontWeight = '700';
+      placeholder.style.fontSize = '32px';
+      placeholder.textContent = initials;
+      document.getElementById('avatar').appendChild(placeholder);
+    }
+  }
+
+  // initial render
+  renderProfile();
+
+  // Avatar upload handling — persist avatar in profile and fbs_avatar
+  document.getElementById('avatar').addEventListener('click', function(){
+    document.getElementById('avatarFile').click();
+  });
+
+  document.getElementById('avatarFile').addEventListener('change', function(){
+    const file = this.files && this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const data = ev.target.result;
+      user.avatar = data;
+      avatarImg.src = data;
+      avatarImg.style.display = 'block';
+      const initialsEl = document.getElementById('avatarInitials');
+      if (initialsEl) initialsEl.remove();
+      try {
+        // save avatar and profile together so load is consistent
+        sessionStorage.setItem('fbs_avatar', data);
+        sessionStorage.setItem('fbs_user_profile', JSON.stringify(user));
+      } catch(e) { /* ignore storage errors (quota) */ }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Edit profile — store full profile to sessionStorage so edits persist
+  document.getElementById('editProfileBtn').addEventListener('click', function(){
+    // Simple modal-less edit using prompt; keep it small and synchronous
+    const name = prompt('Enter your name:', user.name);
+    if (name !== null) user.name = name;
+    const designation = prompt('Enter your designation:', user.designation);
+    if (designation !== null) user.designation = designation;
+    const email = prompt('Enter your email:', user.email);
+    if (email !== null) user.email = email;
+  // phone field removed
+    const address = prompt('Enter your address:', user.address);
+    if (address !== null) user.address = address;
+
+    // save and rerender — save both profile and avatar (if present)
+    try {
+      sessionStorage.setItem('fbs_user_profile', JSON.stringify(user));
+      if (user.avatar) sessionStorage.setItem('fbs_avatar', user.avatar);
+    } catch(e) { /* ignore */ }
+    renderProfile();
+  });
+
+  // Logout — clear session keys we set locally
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    sessionStorage.removeItem('fbs_user');
+    sessionStorage.removeItem('fbs_avatar');
+    sessionStorage.removeItem('fbs_user_profile');
+    location.href = 'index (2).html';
+  });
+
+})();
+</script>
+</body>
+</html>

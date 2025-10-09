@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Accounts — Simple Business Ledger</title>
+  <style>
+    :root{--bg:#0b0b0b;--card:#111;--accent:#01ffff;--muted:#9aa;--danger:#ff5858}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Poppins",sans-serif;background:var(--bg);color:#e9f7f7;margin:0;padding:24px}
+    .wrap{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px}
+    h1{margin:0;font-size:1.4rem;color:var(--accent)}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:18px}
+    .card{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 4px 18px rgba(1,255,255,0.04)}
+    form .row{display:flex;gap:8px;margin-bottom:8px}
+    label{font-size:0.85rem;color:var(--muted)}
+    input,select,textarea{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#070707;color:#eafafa}
+    .btn{display:inline-block;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:700}
+    .btn-accent{background:var(--accent);color:#001}
+    .btn-danger{background:var(--danger);color:#111}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.95rem}
+    th{color:var(--muted);text-align:left}
+    .muted{color:var(--muted)}
+    .totals{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+    .pill{background:#081818;padding:10px;border-radius:8px;color:var(--accent);font-weight:700}
+    .actions{display:flex;gap:8px;align-items:center}
+    .small{font-size:0.85rem;padding:6px 8px}
+    .filter-row{display:flex;gap:8px;align-items:center}
+    @media (max-width:920px){.grid{grid-template-columns:1fr;}.card{padding:12px}}
+  </style>
+  <!-- html2pdf library (stable CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,#002222,#001111);display:flex;align-items:center;justify-content:center;border:2px solid var(--accent)">FbsBD</div>
+      <div>
+        <h1>Business</h1>
+        <div class="muted">FutureByte SolutionBD</div>
+      </div>
+      <div style="margin-left:auto" class="actions">
+        <a href="profile.html" id="backProfile" class="btn small" style="background:#01ffff;color:#001;text-decoration:none;border-radius:6px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center;margin-right:8px">⬅ Back to Profile</a>
+  <button id="exportCsv" class="btn small">Export CSV</button>
+  <button id="exportJson" class="btn small">Export JSON</button>
+  <button id="downloadPdfReport" class="btn small">Download Report (PDF)</button>
+        <input id="importFile" type="file" accept="application/json" style="display:none" />
+        <button id="importBtn" class="btn small">Import JSON</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <form id="entryForm">
+          <div style="display:flex;justify-content:space-between;align-items:end;gap:12px">
+            <div style="flex:1">
+              <label>Date</label>
+              <input id="date" type="date" required />
+            </div>
+            <div style="width:140px">
+              <label>Type</label>
+              <select id="type">
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
+            <div style="width:140px">
+              <label>Amount</label>
+              <input id="amount" type="number" step="0.01" min="0" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div style="flex:1">
+              <label>Description</label>
+              <input id="desc" type="text" placeholder="Sale, purchase, rent..." />
+            </div>
+            <div style="width:160px">
+              <label>Category</label>
+              <select id="category">
+                <option value="general">General</option>
+                <option value="sales">Sales</option>
+                <option value="purchase">Purchase</option>
+                <option value="rent">Rent</option>
+                <option value="salary">Salary</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+            <button type="submit" id="saveBtn" class="btn btn-accent">Add Entry</button>
+            <button type="button" id="clearBtn" class="btn">Clear</button>
+          </div>
+        </form>
+
+        <div class="totals">
+          <div class="pill" id="totalIncome">Income: 0</div>
+          <div class="pill" id="totalExpense">Expense: 0</div>
+          <div class="pill" id="balance">Balance: 0</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="filter-row">
+            <label class="muted">Search</label>
+            <input id="search" placeholder="text or category" />
+            <label class="muted">From</label>
+            <input id="from" type="date" />
+            <label class="muted">To</label>
+            <input id="to" type="date" />
+            <button id="applyFilter" class="btn small">Apply</button>
+            <button id="clearFilter" class="btn small">Clear</button>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;overflow:auto;max-height:360px">
+          <table id="ledger">
+            <thead><tr><th>Date</th><th>Desc</th><th>Category</th><th>Type</th><th>Amount</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Quick actions</h3>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-direction:column">
+          <button id="newToday" class="btn">New: Today Income</button>
+          <button id="newExpense" class="btn">New: Today Expense</button>
+          <button id="resetData" class="btn btn-danger">Reset All Data</button>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:14px 0" />
+
+        <h4>Import / Export</h4>
+        <div class="muted" style="font-size:0.9rem">Keep a backup by exporting JSON or CSV. Import will append entries.</div>
+        <div style="margin-top:12px">
+          <button id="downloadJson" class="btn small">Download JSON Backup</button>
+          <button id="downloadCsv" class="btn small">Download CSV Backup</button>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:14px 0" />
+        <h4>Stats</h4>
+        <div id="stats" class="muted" style="font-size:0.95rem;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const KEY = 'ledger_entries_v1';
+  let entries = [];
+  const $ = id => document.getElementById(id);
+
+  function load(){
+    try{ entries = JSON.parse(localStorage.getItem(KEY) || '[]'); }catch(e){ entries = []; }
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(entries)); }catch(e){ alert('Could not save: ' + e.message); }
+  }
+
+  function uid(){ return Date.now().toString() + Math.random().toString(36).slice(2,6); }
+
+  function addEntry(e){
+    e.preventDefault();
+    const date = $('date').value || new Date().toISOString().slice(0,10);
+    const type = $('type').value;
+    const amount = parseFloat($('amount').value) || 0;
+    const desc = $('desc').value.trim();
+    const category = $('category').value;
+    if (!amount || amount <= 0){ alert('Amount must be positive'); return; }
+    const obj = { id: uid(), date, type, amount: Number(amount.toFixed(2)), desc, category };
+    entries.unshift(obj);
+    save();
+    render();
+    $('entryForm').reset();
+  }
+
+  function render(filter){
+    const tbody = document.querySelector('#ledger tbody'); tbody.innerHTML = '';
+    let shown = entries.slice();
+    // apply filter
+    if (filter){
+      if (filter.text){ const t = filter.text.toLowerCase(); shown = shown.filter(s=> (s.desc||'').toLowerCase().includes(t) || (s.category||'').toLowerCase().includes(t)); }
+      if (filter.from) shown = shown.filter(s => s.date >= filter.from);
+      if (filter.to) shown = shown.filter(s => s.date <= filter.to);
+    }
+    let totalIncome = 0, totalExpense = 0;
+    for (const row of shown){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${row.date}</td><td>${escapeHtml(row.desc||'')}</td><td>${escapeHtml(row.category)}</td><td>${row.type}</td><td style="text-align:right">${row.amount.toFixed(2)}</td><td><button data-id="${row.id}" class="btn small">Edit</button> <button data-del="${row.id}" class="btn small">Del</button></td>`;
+      tbody.appendChild(tr);
+      if (row.type === 'income') totalIncome += row.amount; else totalExpense += row.amount;
+    }
+    $('totalIncome').textContent = 'Income: ' + totalIncome.toFixed(2);
+    $('totalExpense').textContent = 'Expense: ' + totalExpense.toFixed(2);
+    $('balance').textContent = 'Balance: ' + (totalIncome - totalExpense).toFixed(2);
+    $('stats').textContent = `Entries: ${shown.length} / ${entries.length}`;
+
+    // wire edit/delete
+    tbody.querySelectorAll('button[data-id]').forEach(b => b.addEventListener('click', ()=> editEntry(b.getAttribute('data-id'))));
+    tbody.querySelectorAll('button[data-del]').forEach(b => b.addEventListener('click', ()=> deleteEntry(b.getAttribute('data-del'))));
+  }
+
+  function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function editEntry(id){
+    const idx = entries.findIndex(i=>i.id===id); if (idx === -1) return; const e = entries[idx];
+    const newDate = prompt('Date (YYYY-MM-DD):', e.date); if (newDate===null) return;
+    const newType = prompt('Type (income/expense):', e.type); if (newType===null) return;
+    const newAmount = prompt('Amount:', e.amount);
+    if (newAmount===null) return;
+    const newDesc = prompt('Description:', e.desc);
+    if (newDesc===null) return;
+    const newCat = prompt('Category:', e.category);
+    if (newCat===null) return;
+    e.date = newDate; e.type = newType; e.amount = Number(parseFloat(newAmount)||0); e.desc = newDesc; e.category = newCat;
+    entries[idx] = e; save(); render();
+  }
+
+  function deleteEntry(id){ if (!confirm('Delete this entry?')) return; entries = entries.filter(e=>e.id!==id); save(); render(); }
+
+  // Quick actions
+  $('newToday').addEventListener('click', ()=>{
+    const today = new Date().toISOString().slice(0,10);
+    entries.unshift({id:uid(),date:today,type:'income',amount:1000,desc:'Quick income',category:'sales'}); save(); render();
+  });
+  $('newExpense').addEventListener('click', ()=>{
+    const today = new Date().toISOString().slice(0,10);
+    entries.unshift({id:uid(),date:today,type:'expense',amount:200,desc:'Quick expense',category:'purchase'}); save(); render();
+  });
+
+  $('resetData').addEventListener('click', ()=>{ if (!confirm('Reset all data?')) return; entries=[]; save(); render(); });
+
+  // form
+  $('entryForm').addEventListener('submit', addEntry);
+  $('clearBtn').addEventListener('click', ()=> $('entryForm').reset());
+
+  // filters
+  $('applyFilter').addEventListener('click', ()=>{
+    const f = { text: $('search').value.trim(), from: $('from').value||null, to: $('to').value||null };
+    render(f);
+  });
+  $('clearFilter').addEventListener('click', ()=>{ $('search').value=''; $('from').value=''; $('to').value=''; render(); });
+
+  // export/import
+  function toCSV(rows){
+    const hdr = ['date','desc','category','type','amount'];
+    const lines = [hdr.join(',')];
+    for (const r of rows){ lines.push([r.date,`"${(r.desc||'').replace(/"/g,'""') }"`,r.category,r.type,r.amount].join(',')); }
+    return lines.join('\n');
+  }
+
+  $('exportCsv').addEventListener('click', ()=>{
+    const csv = toCSV(entries.slice().reverse()); // oldest first
+    downloadBlob(csv,'text/csv','ledger.csv');
+  });
+  $('exportJson').addEventListener('click', ()=>{
+    const j = JSON.stringify(entries.slice().reverse(),null,2);
+    downloadBlob(j,'application/json','ledger.json');
+  });
+
+  // PDF report generation (uses html2pdf)
+  async function generatePdfReport(filter){
+    // build a simple HTML report
+    let shown = entries.slice();
+    if (filter){
+      if (filter.text){ const t = filter.text.toLowerCase(); shown = shown.filter(s=> (s.desc||'').toLowerCase().includes(t) || (s.category||'').toLowerCase().includes(t)); }
+      if (filter.from) shown = shown.filter(s => s.date >= filter.from);
+      if (filter.to) shown = shown.filter(s => s.date <= filter.to);
+    }
+    let totalIncome = 0, totalExpense = 0;
+    const incomeRows = shown.filter(r=> r.type === 'income').map(r=>{ totalIncome += r.amount; return `<tr><td>${r.date}</td><td>${escapeHtml(r.desc||'')}</td><td>${escapeHtml(r.category)}</td><td style="text-align:right">${r.amount.toFixed(2)}</td></tr>` }).join('');
+    const expenseRows = shown.filter(r=> r.type === 'expense').map(r=>{ totalExpense += r.amount; return `<tr><td>${r.date}</td><td>${escapeHtml(r.desc||'')}</td><td>${escapeHtml(r.category)}</td><td style="text-align:right">${r.amount.toFixed(2)}</td></tr>` }).join('');
+
+    const html = `
+      <div>
+        <style>
+          body{font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial; color:#0b2530; margin:0}
+          .report-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 12px 40px rgba(2,18,23,0.12);max-width:900px;margin:12px auto;color:#042332}
+          .header{display:flex;align-items:center;gap:14px;justify-content:center;text-align:center}
+          .logo{width:84px;height:84px;border-radius:10px;object-fit:contain;padding:6px;background:#fff;box-shadow:0 6px 18px rgba(2,18,23,0.06)}
+          .company h1{margin:0;font-size:22px;color:#012b2f}
+          .company .subtitle{margin-top:6px;color:#406067;font-size:0.95rem}
+          .meta{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+          .pill{padding:10px 12px;border-radius:8px;font-weight:700}
+          .pill.income{background:linear-gradient(90deg,#e6fffb,#dffbf8);color:#045a52}
+          .pill.expense{background:linear-gradient(90deg,#fff1f2,#fff5f6);color:#7a1f1f}
+          .pill.balance{background:linear-gradient(90deg,#eef6ff,#f4fbff);color:#0b4a7a}
+          .sections{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}
+          .section{flex:1;min-width:300px}
+          table{width:100%;border-collapse:collapse;margin-top:8px}
+          th,td{padding:8px 10px;border-bottom:1px solid #eef3f5;font-size:0.95rem}
+          thead th{background:#f7fbfc;text-align:left;color:#395c62;font-weight:700;border-bottom:2px solid #e6eef0}
+          tbody tr:nth-child(even){background:#fcfeff}
+          .section-title{margin:6px 0;font-size:1rem;color:#08343b}
+          .footer{margin-top:18px;font-size:0.85rem;color:#6b8086;text-align:center}
+        </style>
+
+        <div class="report-card">
+          <div class="header">
+            <img class="logo" src="logo.png" alt="logo" onerror="this.style.display='none'" />
+            <div class="company">
+              <h1>FutureByte SolutionBD</h1>
+              <div class="subtitle">Business Report</div>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div class="pill income">Income: ${totalIncome.toFixed(2)}</div>
+            <div class="pill expense">Expense: ${totalExpense.toFixed(2)}</div>
+            <div class="pill balance">Balance: ${(totalIncome-totalExpense).toFixed(2)}</div>
+          </div>
+
+          <div class="sections">
+            <div class="section">
+              <div class="section-title">Income (${totalIncome.toFixed(2)})</div>
+              <table>
+                <thead><tr><th>Date</th><th>Desc</th><th>Category</th><th style="text-align:right">Amount</th></tr></thead>
+                <tbody>${incomeRows || '<tr><td colspan="4" style="padding:10px;text-align:center;color:#7a8b8f">No income entries</td></tr>'}</tbody>
+              </table>
+            </div>
+
+            <div class="section">
+              <div class="section-title">Expense (${totalExpense.toFixed(2)})</div>
+              <table>
+                <thead><tr><th>Date</th><th>Desc</th><th>Category</th><th style="text-align:right">Amount</th></tr></thead>
+                <tbody>${expenseRows || '<tr><td colspan="4" style="padding:10px;text-align:center;color:#7a8b8f">No expense entries</td></tr>'}</tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="footer">Generated on ${new Date().toLocaleString()} — FutureByte SolutionBD</div>
+        </div>
+      </div>`;
+
+    // create a container element
+    const wrapper = document.createElement('div'); wrapper.innerHTML = html; document.body.appendChild(wrapper);
+    // generate PDF using html2pdf if available, otherwise fallback to print window
+    const opt = { margin:10, filename: 'ledger-report.pdf', image:{type:'jpeg',quality:0.9}, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} };
+
+    // helper to dynamically load html2pdf if it's not available
+    function ensureHtml2Pdf(){
+      return new Promise((resolve, reject)=>{
+        if (typeof html2pdf !== 'undefined') return resolve();
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load html2pdf script'));
+        document.head.appendChild(s);
+      });
+    }
+
+    try{
+      // try to ensure library is present (will no-op if already loaded)
+      await ensureHtml2Pdf();
+      // ensure wrapper has a white background for better capture
+      wrapper.style.background = wrapper.style.background || '#ffffff';
+      await html2pdf().set(opt).from(wrapper).save();
+    }catch(e){
+      console.error('PDF generation error:', e);
+      // fallback: open printable window
+      try{
+        const w = window.open('', '_blank');
+        if (!w){ throw new Error('Popup blocked'); }
+        w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Ledger Report</title>');
+        w.document.write('<style>body{font-family:Arial,Helvetica,sans-serif;padding:18px;color:#001}table{width:100%;border-collapse:collapse}th,td{padding:6px;border:1px solid #ccc}</style></head><body>');
+        w.document.write(html);
+        w.document.write('</body></html>');
+        w.document.close();
+        w.focus();
+        alert('PDF generation via library failed or was blocked; opened printable page — please use Print -> Save as PDF.');
+      }catch(err){
+        console.error('Fallback print failed:', err);
+        alert('PDF generation failed: ' + (e.message || err.message));
+      }
+    }finally{
+      // cleanup DOM wrapper
+      if (wrapper && wrapper.parentNode) wrapper.remove();
+    }
+  }
+
+  $('downloadPdfReport').addEventListener('click', ()=>{
+    const f = { text: $('search').value.trim(), from: $('from').value||null, to: $('to').value||null };
+    generatePdfReport(f);
+  });
+
+  $('downloadJson').addEventListener('click', ()=> $('exportJson').click());
+  $('downloadCsv').addEventListener('click', ()=> $('exportCsv').click());
+
+  function downloadBlob(text,type,filename){ const b = new Blob([text],{type}); const url = URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+
+  // import append
+  $('importBtn').addEventListener('click', ()=> $('importFile').click());
+  $('importFile').addEventListener('change', function(){
+    const file = this.files && this.files[0]; if (!file) return; const r=new FileReader(); r.onload=function(ev){
+      try{
+        const data = JSON.parse(ev.target.result);
+        if (!Array.isArray(data)) throw new Error('Invalid JSON: expect array');
+        // normalize and append
+        for (const it of data){ if (!it.date || !it.type || !it.amount) continue; entries.unshift({ id: uid(), date: it.date, type: it.type, amount: Number(it.amount), desc: it.desc||'', category: it.category||'general' }); }
+        save(); render();
+        alert('Imported '+data.length+' records (appended)');
+      }catch(err){ alert('Import failed: '+err.message); }
+    }; r.readAsText(file);
+  });
+
+  // helper to ensure data present
+  load(); render();
+})();
+</script>
+</body>
+</html>

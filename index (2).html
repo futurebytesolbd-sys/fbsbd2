@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FutureByte SolutionBD</title>
+<style>
+  /* add a stylish font */
+  @import url('https://fonts.googleapis.com/css2?family=Calistoga&family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;700&display=swap');
+
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0b0b0b;
+    color: white;
+  }
+
+  header {
+    text-align: center;
+    padding: 70px 20px 40px;
+    background: linear-gradient(180deg, #001f1f, #0b0b0b);
+  }
+
+  .logo {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 4px solid cyan;
+    background-image: url('logo.png'); /* replace with your logo path */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: neonLight 2s infinite alternate;
+  }
+
+  @keyframes neonLight {
+    from { box-shadow: 0 0 15px cyan, 0 0 30px cyan; }
+    to { box-shadow: 0 0 35px #00ffff, 0 0 60px #00ffff; }
+  }
+
+  /* scope the generic h1 so contact H1 remains normal */
+  h1:not(.gradient-text) { color: #01ffff; margin-top: 25px; font-size: 2.3em; }
+
+  /* Gradient animated text for h1 (slower, larger, stylish) */
+  .gradient-text {
+    font-family: 'Calistoga', 'Playfair Display', 'Montserrat', sans-serif;
+    /* Calistoga is a display face (single weight); use normal weight for best rendering */
+    font-weight: 400;
+    font-size: 3.2rem;               /* larger */
+    line-height: 1.05;
+    letter-spacing: 0.6px;
+    background: linear-gradient(270deg, #01ffff, #e6cbe0, #77c558, #01ffff);
+    background-size: 400% 400%;     /* smoother gradient movement */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 6px 18px rgba(1,255,255,0.06), 0 2px 8px rgba(255,0,204,0.03);
+    animation: gradientMove 12s ease-in-out infinite; /* slower + smooth easing */
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* responsive adjustment for smaller screens */
+  @media (max-width: 720px) {
+    .gradient-text { font-size: 2.2rem; }
+    /* ...existing code... */
+    .contact-box { grid-template-columns: 1fr; }
+    .contact-box button { width: 100%; }
+  }
+
+  p.subtitle { font-size: 1.1em; color: #ccc; }
+
+  .login-section {
+    width: 90%;
+    max-width: 350px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background: #111;
+    box-shadow: 0 0 15px cyan;
+    text-align: center;
+  }
+
+  .login-section input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 5px;
+    background: #222;
+    color: white;
+  }
+
+  .login-section button {
+    background: cyan;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .login-section button:hover { background: #00cccc; }
+
+  .founders {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 40px 10px;
+  }
+
+  /* modifier to reduce vertical gap between stacked .founders sections */
+  .founders--tight {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: -20px; /* pull sections closer together */
+  }
+
+  .founder {
+    background: #111;
+    width: 280px;
+    margin: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 0 10px cyan;
+    transition: 0.3s;
+  }
+
+  /* glowing box style for section headings (like the logo neon) */
+  .section-box {
+    width: auto;
+    display: inline-block;
+    padding: 14px 22px;
+    margin: 10px auto;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(0,255,255,0.06);
+    box-shadow: 0 0 12px rgba(0,255,255,0.12), 0 0 40px rgba(0,255,255,0.08);
+    animation: neonLight 2.5s infinite alternate;
+  }
+
+  .founder:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00ffff;
+  }
+
+  .founder img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 0px solid cyan;
+    margin-bottom: 10px;
+  }
+
+  .founder h3 { color: #00ffff; margin-bottom: 5px; }
+  .founder p { color: #ccc; font-size: 0.9em; margin: 4px 0; }
+
+  footer {
+    background: #050505;
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-size: 0.9em;
+  }
+
+  /* Contact box (matches site boxed/neon look) */
+  .contact-box {
+    width: 92%;
+    max-width: 900px;
+    margin: 22px auto;
+    padding: 18px;
+    border-radius: 12px;
+    /* make the contact card brighter / match Admin Login */
+    background: #111;
+    border: 1px solid rgba(0,255,255,0.06);
+    box-shadow: 0 0 15px cyan;
+    color: #ddd;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .contact-box .info { 
+    padding: 6px 4px;
+    /* center everything in the info column */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .contact-box .info h2 { color: #01ffff; margin: 0; }
+  .contact-box .info p { color: #cfd8d8; margin: 0; }
+
+  .contact-box .form { padding: 6px 4px; }
+  .contact-box input,
+  .contact-box textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.03);
+    background: #111;
+    color: #eee;
+    font-size: 0.95em;
+    box-sizing: border-box;
+  }
+  .contact-box textarea { min-height: 140px; resize: vertical; }
+
+  .contact-box button {
+    background: cyan;
+    color: #000;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .contact-box button:hover { background: #00cccc; }
+
+  /* admin login social icons (small, matching site style) */
+  .admin-socials {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .admin-socials a {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(0,255,255,0.06);
+    color: #01ffff;
+    text-decoration: none;
+    box-shadow: 0 0 8px rgba(0,255,255,0.04);
+  }
+  .admin-socials a svg { width:18px; height:18px; display:block; }
+
+  /* Services section (new) */
+  .services {
+    width: 94%;
+    max-width: 1100px;
+    margin: 32px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+  .service-card {
+    background: #0f0f12;
+    border: 1px solid rgba(0,255,255,0.06);
+    box-shadow: 0 0 18px rgba(0,255,255,0.06);
+    padding: 18px;
+    border-radius: 10px;
+    color: #dfeff0;
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 36px rgba(0,255,255,0.12);
+  }
+  .service-card h3 {
+    color: #01ffff;
+    margin: 0 0 8px 0;
+    font-size: 1.15rem;
+  }
+  .service-card ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+    color: #cfd8d8;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* highlight first column as Security */
+  .service-card--security { border-left: 4px solid #00d4d4; }
+  .service-card--it { border-left: 4px solid #77c558; }
+  .service-card--dev { border-left: 4px solid #ff66b2; }
+  .service-card--networking { border-left: 4px solid #13882c; }
+  .service-card--audit { border-left: 4px solid #3011e0; }
+  .service-card--consultancy { border-left: 4px solid #bcb9ce; }
+  @media (max-width: 980px) {
+    .services { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .services { grid-template-columns: 1fr; }
+    .gradient-text { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"></div>
+  <h1 class="gradient-text">FutureByte SolutionBD</h1>
+  <p class="subtitle">Innovating IT Solutions for a Smarter Tomorrow</p>
+<p class="subtitle">🏢ECBChattar, Dhaka Cantt.✉️futurebytesolbd@gmail.com</p>
+</header>
+
+<section class="founders">
+  <div class="founder section-box">
+    <h2 class="section-title">“Our Team”</h2>
+  </div>
+</section>
+
+<section class="founders founders--tight">
+  <div class="founder">
+
+    <img src="founder1.jpg" alt="Khalilur Rahman">
+    <h3>Khalilur Rahman</h3>
+    <p>Co-Founder & IT Specialist</p>
+    <p>📞 +8801739914929</p>
+    <p>✉️ khalilur10374@gmail.com</p>
+  </div>
+
+  <div class="founder">
+    <img src="founder2.jpg" alt="Eng CM Mehdi Hasan">
+    <h3>Eng CM Mehdi Hasan</h3>
+    <p>Co-Founder & Web Development</p>
+    <p>📞 +8801711972985</p>
+    <p>✉️ cmmehedi.uiu@gmail.com</p>
+  </div>
+</section>
+
+<section class="founders">
+  <div class="founder section-box">
+    <h2 class="section-title">“Our clients”</h2>
+  </div>
+</section>
+
+<section class="founders founders--tight">
+  <div class="founder">
+    <img src="founder5.png" alt="Eng CM Mehedi Hasan">
+    <h3>AHQ</h3>
+    <p>Bangladesh Army</p>
+     </div>
+
+ <div class="founder">
+    <img src="founder6.png" alt="Khalilur Rahman">
+    <h3>AITSO</h3>
+    <p>Bangladesh Army</p>
+      </div>
+
+  <div class="founder">
+    <img src="founder7.png" alt="Eng CM Mehedi Hasan">
+    <h3>ARTDOC</h3>
+    <p>Bangladesh Army</p>
+     </div>
+
+<div class="founder">
+    <img src="founder8.png" alt="Monohurdi Upozila">
+    <h3>Monohurdi Upozila</h3>
+    <p>Social Content Organization</p>
+     </div>
+
+
+<div class="founder">
+    <img src="founder9.png" alt="Monohurdi Upozila">
+    <h3>CMH Dhaka</h3>
+    <p>Bangladesh Army</p>
+     </div>
+</section>
+
+<section class="founders">
+  <div class="founder section-box">
+    <h2 class="section-title">“Our Services"</h2>
+  </div>
+</section>
+<!-- New Services section -->
+<section class="services" aria-label="Services">
+  <div class="service-card service-card--security">
+    <h3>সিকিউরিটি ডিভাইস সলিউশন</h3>
+    <ul>
+      <li>CCTV ক্যামেরা ও সার্ভেইল্যান্স সিস্টেম</li>
+      <li>বায়োমেট্রিক এক্সেস কন্ট্রোল (Fingerprint, Face Recognition, RFID)</li>
+      <li>স্মার্ট ডোর লক ও এক্সেস কন্ট্রোল</li>
+      <li>ফায়ার অ্যালার্ম ও স্মোক ডিটেক্টর</li>
+      <li>GPS ট্র্যাকিং সিস্টেম (গাড়ি, পণ্য ও ব্যক্তির জন্য)</li>
+      <li>ইলেকট্রিক ফেন্স ও বার্গলার অ্যালার্ম সিস্টেম</li>
+      <li>সাইবার সিকিউরিটি সলিউশন ও ডাটা সিকিউরিটি</li>
+      <li>সার্ভার সেটআপ, মেইনটেন্যান্স ও ব্যাকআপ/রিকভারি</li>
+      <li>ব্যবসার জন্য আইটি ইনফ্রাস্ট্রাকচার কনসালটেন্সি</li>
+      <li>টেকনিক্যাল সাপোর্ট ও IT হেল্পডেস্ক</li>
+    </ul>
+  </div>
+
+  <div class="service-card service-card--it">
+    <h3>আইটি ডিভাইস ও নেটওয়ার্কিং</h3>
+    <ul>
+      <li>কম্পিউটার ও ল্যাপটপ বিক্রয় ও সার্ভিসিং</li>
+      <li>ওয়াইফাই রাউটার, নেটওয়ার্কিং ইকুইপমেন্ট ও ইনস্টলেশন</li>
+      <li>ডাটা স্টোরেজ ও ক্লাউড সলিউশন</li>
+      <li>প্রিন্টার, স্ক্যানার ও অফিস অটোমেশন ডিভাইস</li>
+      <li>সাইবার সিকিউরিটি সলিউশন ও ডাটা সিকিউরিটি</li>
+      <li>সার্ভার সেটআপ, মেইনটেন্যান্স ও ব্যাকআপ/রিকভারি</li>
+      <li>ব্যবসার জন্য আইটি ইনফ্রাস্ট্রাকচার কনসালটেন্সি</li>
+      <li>টেকনিক্যাল সাপোর্ট ও IT হেল্পডেস্ক</li>
+      <li>নেটওয়ার্ক সেটআপ ও মেইনটেন্যান্স</li>
+      <li>পেনিট্রেশন টেস্টিং ও সিকিউরিটি অডিট</li>
+      <li>SSL সার্টিফিকেট ও এনক্রিপশন সলিউশন</li>
+    </ul>
+  </div>
+
+  <div class="service-card service-card--dev">
+    <h3>সফটওয়্যার ও ডিজিটাল সেবা</h3>
+    <ul>
+      <li>কাস্টম ওয়েবসাইট ডেভেলপমেন্ট ও UI/UX ডিজাইন</li>
+      <li>ই-কমার্স ওয়েবসাইট ও ওয়েবসাইট মেইনটেন্যান্স</li>
+      <li>কাস্টম বিজনেস ম্যানেজমেন্ট সফটওয়্যার, POS, ইনভেন্টরি ও অ্যাকাউন্টিং সফটওয়্যার</li>
+      <li>মোবাইল অ্যাপ ডেভেলপমেন্ট (iOS & Android)</li>
+      <li>ডিজিটাল মার্কেটিং ও SEO (SEO, Social Media, Paid Ads)</li>
+      <li>নেটওয়ার্ক সেটআপ ও মেইনটেন্যান্স</li>
+      <li>পেনিট্রেশন টেস্টিং ও সিকিউরিটি অডিট</li>
+      <li>SSL সার্টিফিকেট ও এনক্রিপশন সলিউশন</li>
+      <li>ইনভেন্টরি ও অ্যাকাউন্টিং সফটওয়্যার</li>
+    </ul>
+  </div>
+</section>
+
+<!-- New contact section (info + form) -->
+<section class="contact-box" aria-label="Contact">
+  <div class="info" aria-hidden="false">
+    <h1>Contact Us</h1>
+    <p>FutureByte SolutionBD</p>
+    <p>📍 ECBChattar, Dhaka Cantt.</p>
+    <p>✉️ futurebytesolbd@gmail.com</p>
+    <p>📞 <a href="https://wa.me/8801739914929" style="color:#01ffff;text-decoration:none">+8801739914929</a> (WhatsApp)</p>
+    <p style="color:#08e7e7;margin-top:10px">Share project details or a short brief — we'll reply via WhatsApp or email.</p>
+  </div>
+
+  <div class="form">
+    <form id="contactForm" novalidate>
+      <input id="cname" name="name" type="text" placeholder="Your name" required>
+      <input id="cemail" name="email" type="email" placeholder="Your email" required>
+      <input id="csubject" name="subject" type="text" placeholder="Subject (optional)">
+      <textarea id="cmessage" name="message" placeholder="Your message" required></textarea>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:6px">
+        <button type="submit">Send Message</button>
+        <span id="contactMsg" style="color:#cfd8d8;font-size:0.95em"></span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="login-section">
+  <h2>Admin Login</h2>
+  <input type="text" id="username" placeholder="Enter Username">
+  <input type="password" id="password" placeholder="Enter Password">
+  <button onclick="login()">Login</button>
+  <p id="msg"></p>
+</section>
+
+<!-- moved admin social icons below the login box -->
+<div class="admin-socials" aria-hidden="false" style="margin-bottom:18px;">
+  <a href="https://wa.me/8801711972985" target="_blank" rel="noopener" title="+8801711972985 (WhatsApp)" aria-label="WhatsApp 1">
+    <!-- WhatsApp SVG -->
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.52 3.48A11.97 11.97 0 0012 0 11.93 11.93 0 00.6 6.12C0 8.15.55 10.03 1.52 11.79L0 24l6.36-1.49A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-1.99-.45-3.79-1.48-5.22zM12 21.5c-1.98 0-3.85-.52-5.5-1.44l-.39-.22-3.78.88.96-3.69-.25-.4A9.5 9.5 0 1112 21.5zM17.2 13.9c-.28-.14-1.66-.82-1.92-.91-.26-.09-.45-.14-.64.14-.19.28-.72.91-.88 1.1-.16.19-.32.21-.6.07-.28-.14-1.18-.43-2.25-1.39-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.64-1.54-.88-2.11-.23-.55-.47-.47-.64-.48-.17-.01-.36-.01-.55-.01-.19 0-.5.07-.76.34-.26.27-1 1-1 2.43s1.02 2.81 1.16 3c.14.19 2.01 3.12 4.86 4.27 2.85 1.16 2.85.77 3.36.72.51-.05 1.66-.68 1.89-1.34.23-.66.23-1.23.16-1.34-.07-.11-.28-.16-.56-.3z"/></svg>
+  </a>
+
+  <a href="https://wa.me/8801739914929" target="_blank" rel="noopener" title="+8801739914929 (WhatsApp)" aria-label="WhatsApp 2">
+    <!-- WhatsApp SVG (reuse) -->
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.52 3.48A11.97 11.97 0 0012 0 11.93 11.93 0 00.6 6.12C0 8.15.55 10.03 1.52 11.79L0 24l6.36-1.49A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-1.99-.45-3.79-1.48-5.22zM12 21.5c-1.98 0-3.85-.52-5.5-1.44l-.39-.22-3.78.88.96-3.69-.25-.4A9.5 9.5 0 1112 21.5zM17.2 13.9c-.28-.14-1.66-.82-1.92-.91-.26-.09-.45-.14-.64.14-.19.28-.72.91-.88 1.1-.16.19-.32.21-.6.07-.28-.14-1.18-.43-2.25-1.39-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.64-1.54-.88-2.11-.23-.55-.47-.47-.64-.48-.17-.01-.36-.01-.55-.01-.19 0-.5.07-.76.34-.26.27-1 1-1 2.43s1.02 2.81 1.16 3c.14.19 2.01 3.12 4.86 4.27 2.85 1.16 2.85.77 3.36.72.51-.05 1.66-.68 1.89-1.34.23-.66.23-1.23.16-1.34-.07-.11-.28-.16-.56-.3z"/></svg>
+  </a>
+
+  <a href="#" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook">
+    <!-- Facebook SVG -->
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 12a10 10 0 10-11.6 9.9v-7H8.9V12h1.5V9.8c0-1.5.9-2.3 2.2-2.3.64 0 1.3.12 1.3.12v1.4h-.72c-.71 0-.93.44-.93.89V12h1.6l-.26 2.9h-1.34v7A10 10 0 0022 12z"/></svg>
+  </a>
+
+  <a href="#" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube">
+    <!-- YouTube SVG -->
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2s-.2-1.67-.8-2.4c-.77-.83-1.64-.84-2.04-.9C17.75 2.6 12 2.6 12 2.6h-.01s-5.75 0-8.66.3c-.4.06-1.27.07-2.04.9C.7 4.5.5 6.2.5 6.2S.2 8.1.2 9.98v1.99C.2 15 0 16.9 0 16.9s.2 1.67.8 2.4c.77.83 1.78.8 2.23.89 1.62.26 6.86.3 6.86.3s5.76 0 8.66-.3c.4-.06 1.27-.07 2.04-.9.6-.73.8-2.4.8-2.4s.2-1.87.2-3.75V9.98c0-1.87-.2-3.78-.2-3.78zM9.75 15.5V8.5l6.04 3.5-6.04 3.5z"/></svg>
+  </a>
+</div>
+
+<footer>
+  © 2025 FutureByte SolutionBD | All Rights Reserved
+</footer>
+
+<script>
+	const users = {
+		"khalil": "123",
+		"mehdi": "123"
+	};
+
+	function login() {
+		const username = document.getElementById("username").value.trim().toLowerCase();
+		const password = document.getElementById("password").value.trim();
+		const msg = document.getElementById("msg");
+
+		if (users[username] && users[username] === password) {
+			// store a simple session marker
+			sessionStorage.setItem('fbs_user', username);
+			msg.style.color = "lime";
+			msg.textContent = "✅আপনাকে ধন্যবাদ ! Redirecting...";
+			setTimeout(() => {
+				// navigate to the profile page (use a relative path)
+				location.href = 'profile.html';
+			}, 600);
+		} else {
+			msg.style.color = "red";
+			msg.textContent = "❌ আপনি ভুল পাসওয়ার্ড দিয়েছেন!";
+		}
+	}
+
+	// Contact form handler
+	(function(){
+		const form = document.getElementById('contactForm');
+		if (!form) return;
+		const out = document.getElementById('contactMsg');
+		form.addEventListener('submit', function(e){
+			e.preventDefault();
+			const name = document.getElementById('cname').value.trim();
+			const email = document.getElementById('cemail').value.trim();
+			const message = document.getElementById('cmessage').value.trim();
+
+			if (!name || !email || !message) {
+				out.style.color = 'salmon';
+				out.textContent = 'সবগুলো প্রয়োজনীয় ঘর পূরণ করুন।';
+				return;
+			}
+
+			// Placeholder: attach server POST here if needed.
+			out.style.color = 'lime';
+			out.textContent = 'আপনার বার্তা পাঠানো হয়েছে, ধন্যবাদ!';
+			form.reset();
+
+			// optional small fade-out of message after 4s
+			setTimeout(() => { out.textContent = ''; }, 4000);
+		});
+	})();
+
+	// clear all cookies and storage now
+	function clearAllCookiesAndStorage() {
+		// delete all cookies visible to document
+		document.cookie.split(";").forEach(function(c) {
+			const cookieName = c.split("=")[0].trim();
+			// expire cookie for path root
+			document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+			// also try with current domain
+			try {
+				const host = location.hostname;
+				document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + host;
+			} catch (e) { /* ignore */ }
+		});
+
+		// clear storages
+		try { localStorage.clear(); } catch (e) { /* ignore */ }
+		try { sessionStorage.clear(); } catch (e) { /* ignore */ }
+
+		// notify on page
+		const msgEl = document.getElementById('msg') || document.getElementById('contactMsg');
+		if (msgEl) {
+			msgEl.style.color = 'silver';
+			msgEl.textContent = 'Only for Co-Founder';
+		} else {
+			console.log('All cookies and storage cleared.');
+		}
+	}
+
+	// perform clear immediately as requested
+	clearAllCookiesAndStorage();
+</script>
+
+</body>
+</html>
+
+
